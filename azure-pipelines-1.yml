@@ -2,10 +2,10 @@ trigger:
         - main
 
         - pool:
-          vmImage: 'ubuntu-1604'
+            vmImage: 'ubuntu-1604'
 
         - variables:
-          imageName: 'ArchiveBox'
+            imageName: 'ArchiveBox'
 
         - steps:
         - task: Docker@2
