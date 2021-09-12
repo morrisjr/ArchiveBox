@@ -5,7 +5,7 @@ trigger:
           vmImage: 'ubuntu-1604' # set to windows-latest or another Windows vmImage for Windows builds
 
         variables:
-          imageName: 'pipelines-javascript-docker'
+          imageName: 'ArchiveBox'
 
         steps:
         - task: Docker@2
