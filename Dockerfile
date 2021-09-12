@@ -12,11 +12,11 @@ FROM python:3.9-slim-buster
 LABEL name="archivebox" \
     maintainer="Nick Sweeting <archivebox-docker@sweeting.me>" \
     description="All-in-one personal internet archiving container" \
-    homepage="https://github.com/ArchiveBox/ArchiveBox" \
-    documentation="https://github.com/ArchiveBox/ArchiveBox/wiki/Docker#docker"
+    homepage="https://github.com/morrisjr/ArchiveBox" \
+    documentation="https://github.com/morrisjr/ArchiveBox/wiki/Docker#docker"
 
 # System-level base config
-ENV TZ=UTC \
+ENV TZ=CST \
     LANGUAGE=en_US:en \
     LC_ALL=C.UTF-8 \
     LANG=C.UTF-8 \

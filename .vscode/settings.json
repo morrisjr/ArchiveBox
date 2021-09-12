@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/3037e574-9b2c-4a87-b222-bfe9247efaf8/resourceGroups/appsvc_linux_centralus_basic/providers/Microsoft.Web/sites/pii-archivebox",
+    "appService.deploySubpath": "."
+}
