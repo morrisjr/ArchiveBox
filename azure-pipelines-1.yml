@@ -7,7 +7,7 @@ trigger:
         - variables:
           imageName: 'ArchiveBox'
 
-        steps:
+        - steps:
         - task: Docker@2
           displayName: Build an image
           inputs:
