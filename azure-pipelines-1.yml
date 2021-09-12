@@ -1,10 +1,10 @@
 trigger:
         - main
 
-        pool:
+        - pool:
           vmImage: 'ubuntu-1604'
 
-        variables:
+        - variables:
           imageName: 'ArchiveBox'
 
         steps:
