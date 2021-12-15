@@ -51,10 +51,13 @@ The goal is to sleep soundly knowing the part of the internet you care about wil
 
 <br/>
 
-**📦&nbsp; Get ArchiveBox with `docker-compose` / `docker` / `apt` / `brew` / `pip3` ([see Quickstart below](#quickstart)).**
+**📦&nbsp; Get ArchiveBox with Docker / `apt` / `brew` / `pip3` / etc. ([see Quickstart below](#quickstart)).**
 
 ```bash
-# Or use this auto setup script to install it for you (optional)
+# Follow the instructions for your package manager in the quickstart, e.g.:
+pip3 install archivebox
+
+# Or use the optional auto setup script to install it for you:
 curl -sSL 'https://get.archivebox.io' | sh
 ```
 
@@ -171,8 +174,9 @@ See <a href="https://github.com/ArchiveBox/ArchiveBox/blob/dev/bin/setup.sh"><co
 
 <br/>
 
-#### 🛠&nbsp; Manual Setup
+#### 🛠&nbsp; Package Manager Setup
 
+<a name="Manual-Setup"></a>
 <details>
 <summary><b><img src="https://user-images.githubusercontent.com/511499/117448075-49597580-af0c-11eb-91ba-f34fff10096b.png" alt="aptitude" height="28px" align="top"/> <code>apt</code></b> (Ubuntu/Debian)</summary>
 <br/>
@@ -367,8 +371,8 @@ archivebox help
 #### 🖥&nbsp; Web UI Usage
 
 ```bash
-archivebox manage createsuperuser
-archivebox server 0.0.0.0:8000   # open http://127.0.0.1:8000 to view it
+archivebox manage createsuperuser  # set an admin password
+archivebox server 0.0.0.0:8000     # open http://127.0.0.1:8000 to view it
 
 # you can also configure whether or not login is required for most features
 archivebox config --set PUBLIC_INDEX=False
@@ -419,6 +423,7 @@ ArchiveBox supports many input formats for URLs, including Pocket & Pinboard exp
 
 - <img src="https://nicksweeting.com/images/rss.svg" height="22px"/> TXT, RSS, XML, JSON, CSV, SQL, HTML, Markdown, or [any other text-based format...](https://github.com/ArchiveBox/ArchiveBox/wiki/Usage#Import-a-list-of-URLs-from-a-text-file)
 - <img src="https://nicksweeting.com/images/bookmarks.png" height="22px"/> [Browser history](https://github.com/ArchiveBox/ArchiveBox/wiki/Quickstart#2-get-your-list-of-urls-to-archive) or [browser bookmarks](https://github.com/ArchiveBox/ArchiveBox/wiki/Quickstart#2-get-your-list-of-urls-to-archive) (see instructions for: [Chrome](https://support.google.com/chrome/answer/96816?hl=en), [Firefox](https://support.mozilla.org/en-US/kb/export-firefox-bookmarks-to-backup-or-transfer), [Safari](http://i.imgur.com/AtcvUZA.png), [IE](https://support.microsoft.com/en-us/help/211089/how-to-import-and-export-the-internet-explorer-favorites-folder-to-a-32-bit-version-of-windows), [Opera](http://help.opera.com/Windows/12.10/en/importexport.html), [and more...](https://github.com/ArchiveBox/ArchiveBox/wiki/Quickstart#2-get-your-list-of-urls-to-archive))
+- <img src="https://i.imgur.com/AQyHbu8.png" height="22px"/> Browser extension [`archivebox-exporter`](https://github.com/tjhorner/archivebox-exporter) (realtime archiving from Chrome/Chromium/Firefox)
 - <img src="https://getpocket.com/favicon.ico" height="22px"/> [Pocket](https://getpocket.com/export), [Pinboard](https://pinboard.in/export/), [Instapaper](https://www.instapaper.com/user/export), [Shaarli](https://shaarli.readthedocs.io/en/master/Usage/#importexport), [Delicious](https://www.groovypost.com/howto/howto/export-delicious-bookmarks-xml/), [Reddit Saved](https://github.com/csu/export-saved-reddit), [Wallabag](https://doc.wallabag.org/en/user/import/wallabagv2.html), [Unmark.it](http://help.unmark.it/import-export), [OneTab](https://www.addictivetips.com/web/onetab-save-close-all-chrome-tabs-to-restore-export-or-import/), [and more...](https://github.com/ArchiveBox/ArchiveBox/wiki/Quickstart#2-get-your-list-of-urls-to-archive)
 
 <img src="https://i.imgur.com/zM4z1aU.png" width="330px" align="right">
@@ -895,7 +900,9 @@ archivebox --version
 # if you edit e.g. ./archivebox/core/models.py on the docker host, runserver
 # inside the container will reload and pick up your changes
 docker build . -t archivebox
-docker run -it archivebox init --setup
+docker run -it \
+    -v $PWD/data:/data \
+    archivebox init --setup
 docker run -it -p 8000:8000 \
     -v $PWD/data:/data \
     -v $PWD/archivebox:/app/archivebox \
