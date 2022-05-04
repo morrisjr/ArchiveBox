@@ -79,6 +79,7 @@ CONFIG_SCHEMA: Dict[str, ConfigDefaultDict] = {
         'URL_BLACKLIST':            {'type': str,   'default': r'\.(css|js|otf|ttf|woff|woff2|gstatic\.com|googleapis\.com/css)(\?.*)?$'},  # to avoid downloading code assets as their own pages
         'URL_WHITELIST':            {'type': str,   'default': None},
         'ENFORCE_ATOMIC_WRITES':    {'type': bool,  'default': True},
+        'TAG_SEPARATOR_PATTERN':    {'type': str,   'default': r'[,]'},
     },
 
     'SERVER_CONFIG': {
@@ -119,9 +120,9 @@ CONFIG_SCHEMA: Dict[str, ConfigDefaultDict] = {
         'CHECK_SSL_VALIDITY':       {'type': bool,  'default': True},
         'MEDIA_MAX_SIZE':           {'type': str,   'default': '750m'},
 
-        'CURL_USER_AGENT':          {'type': str,   'default': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.61 Safari/537.36 ArchiveBox/{VERSION} (+https://github.com/ArchiveBox/ArchiveBox/) curl/{CURL_VERSION}'},
-        'WGET_USER_AGENT':          {'type': str,   'default': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.61 Safari/537.36 ArchiveBox/{VERSION} (+https://github.com/ArchiveBox/ArchiveBox/) wget/{WGET_VERSION}'},
-        'CHROME_USER_AGENT':        {'type': str,   'default': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.61 Safari/537.36 ArchiveBox/{VERSION} (+https://github.com/ArchiveBox/ArchiveBox/)'},
+        'CURL_USER_AGENT':          {'type': str,   'default': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/605.1.15 ArchiveBox/{VERSION} (+https://github.com/ArchiveBox/ArchiveBox/) curl/{CURL_VERSION}'},
+        'WGET_USER_AGENT':          {'type': str,   'default': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/605.1.15 ArchiveBox/{VERSION} (+https://github.com/ArchiveBox/ArchiveBox/) wget/{WGET_VERSION}'},
+        'CHROME_USER_AGENT':        {'type': str,   'default': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/605.1.15 ArchiveBox/{VERSION} (+https://github.com/ArchiveBox/ArchiveBox/)'},
 
         'COOKIES_FILE':             {'type': str,   'default': None},
         'CHROME_USER_DATA_DIR':     {'type': str,   'default': None},
@@ -141,6 +142,7 @@ CONFIG_SCHEMA: Dict[str, ConfigDefaultDict] = {
                                                                 '--yes-playlist',
                                                                 '--continue',
                                                                 '--ignore-errors',
+                                                                '--no-abort-on-error',
                                                                 '--geo-bypass',
                                                                 '--add-metadata',
                                                                 '--max-filesize={}'.format(c['MEDIA_MAX_SIZE']),
@@ -649,7 +651,7 @@ def bin_version(binary: Optional[str]) -> Optional[str]:
         return None
 
     try:
-        version_str = run([abspath, "--version"], stdout=PIPE).stdout.strip().decode()
+        version_str = run([abspath, "--version"], stdout=PIPE, env={'LANG': 'C'}).stdout.strip().decode()
         # take first 3 columns of first line of version info
         return ' '.join(version_str.split('\n')[0].strip().split()[:3])
     except OSError:
@@ -928,7 +930,7 @@ def get_chrome_info(config: ConfigDict) -> ConfigValue:
         'TIMEOUT': config['TIMEOUT'],
         'RESOLUTION': config['RESOLUTION'],
         'CHECK_SSL_VALIDITY': config['CHECK_SSL_VALIDITY'],
-        'CHROME_BINARY': config['CHROME_BINARY'],
+        'CHROME_BINARY': bin_path(config['CHROME_BINARY']),
         'CHROME_HEADLESS': config['CHROME_HEADLESS'],
         'CHROME_SANDBOX': config['CHROME_SANDBOX'],
         'CHROME_USER_AGENT': config['CHROME_USER_AGENT'],
@@ -1157,7 +1159,7 @@ def setup_django(out_dir: Path=None, check_db=False, config: ConfigDict=CONFIG, 
         from django.conf import settings
 
         # log startup message to the error log
-        with open(settings.ERROR_LOG, "a+", encoding='utf-8') as f:
+        with open(settings.ERROR_LOG, "a", encoding='utf-8') as f:
             command = ' '.join(sys.argv)
             ts = datetime.now(timezone.utc).strftime('%Y-%m-%d__%H:%M:%S')
             f.write(f"\n> {command}; ts={ts} version={config['VERSION']} docker={config['IN_DOCKER']} is_tty={config['IS_TTY']}\n")
